@@ -35,9 +35,7 @@ const Part = ({part}) => {
   )
 }
 const Total = ({parts}) => {
-  const total = 0
-  {parts.map(
-    part => total = total + part.exercises)}
+  let total = parts.reduce(function(total, part) { return total + part.exercises}, 0)
   return (
     <>
       total of {total} exercises

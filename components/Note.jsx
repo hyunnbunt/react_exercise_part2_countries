@@ -1,5 +1,5 @@
 
-const Note = ({key, note}) => {
+const Note = ({note}) => {
     return (
         <li>{note.content}</li>
     )

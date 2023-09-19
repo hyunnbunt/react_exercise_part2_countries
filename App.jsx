@@ -1,5 +1,55 @@
 import { useState } from 'react'
 
+
+const Filter = (props) => {
+  return (
+    <form>
+      <div>
+        filter shown with <input value={props.keyword} onChange={props.handleKeywordChange} />
+      </div>
+    </form>
+  )
+}
+
+const PersonForm = (props) => {
+  return (
+    <form>
+      <div>
+        name: <input value={props.newName} onChange={props.handleNameChange} />
+      </div>
+      <div>
+        number: <input value={props.newNumber} onChange={props.handleNumberChange} />
+      </div>
+      <div>
+        <button onClick={props.addName} type="submit">add</button>
+      </div>
+    </form>
+    )
+}
+
+const Persons = (props) => {
+  console.log(props)
+  return (
+    <>
+      {props.persons.map(person => {
+        if (person.name.toLowerCase().includes(props.keyword.toLowerCase())) {
+          return <DisplayPerson key={person.name} person={person} />
+        }
+      })}
+    </>
+  )
+}
+
+const DisplayPerson = ({person}) => {
+  return (
+    <div>
+      {person.name} {person.number}
+    </div>
+  )
+}
+
+
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -11,6 +61,21 @@ const App = () => {
   const [newNumber, setNewNumber] = useState('')
   const [keyword, setKeyword] = useState('')
 
+  const handleNameChange = (event) => {
+    setNewName(event.target.value)
+    console.log(newName)
+  }
+  
+  
+  const handleNumberChange = (event) => {
+    setNewNumber(event.target.value)
+    console.log(newNumber)
+  }
+  
+  const handleKeywordChange = (event) => {
+    setKeyword(event.target.value)
+  }
+  
   const addName = (event) => {
     event.preventDefault()
     let isPersonExist = false
@@ -32,59 +97,21 @@ const App = () => {
     console.log(persons)
   }
 
-  const handleNameChange = (event) => {
-    setNewName(event.target.value)
-    console.log(newName)
-  }
-
-  
-  const handleNumberChange = (event) => {
-    setNewNumber(event.target.value)
-    console.log(newNumber)
-  }
-
-  const handleKeywordChange = (event) => {
-    setKeyword(event.target.value)
-  }
-
-  const Display = ({person}) => {
-    if (!person.name.toLowerCase().includes(keyword.toLowerCase())) {
-      return
-    }
-    return (
-      <div>
-        {person.name} {person.number}
-      </div>
-    )
-  }
-
-
   return (
     <div>
       <h2>Phonebook</h2>
-      <form>
-        <div>
-          filter shown with <input value={keyword} onChange={handleKeywordChange} />
-        </div>
-      </form>
-      <h2>add a new</h2>
-      <form>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          number: <input value={newNumber} onChange={handleNumberChange} />
-        </div>
-        <div>
-          <button onClick={addName} type="submit">add</button>
-        </div>
-      </form>
-      <h2>Numbers</h2>
-      <>
-        {persons.map(person => 
-          <Display key={person.name} person={person}/>
-        )}
-      </>
+      <Filter keyword={keyword} handleKeywordChange={handleKeywordChange} />
+
+      <h3>add a new</h3>
+      <PersonForm 
+        newName={newName} 
+        newNumber={newNumber} 
+        handleNameChange={handleNameChange} 
+        handleNumberChange={handleNumberChange} 
+        addName={addName} 
+      />
+      <h3>Numbers</h3>
+      <Persons persons={persons} keyword={keyword} />
     </div>
   )
 }

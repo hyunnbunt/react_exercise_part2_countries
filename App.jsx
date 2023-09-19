@@ -4,11 +4,14 @@ const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas' }
   ]) 
-  const [newName, setNewName] = useState('d')
+  const [newName, setNewName] = useState('')
 
   const addName = (event) => {
     event.preventDefault()
-    console.log('newName', newName)
+    if ((persons.map(person => person.name === newName)).length > 0) {
+      alert(`${newName} is already added to phonebook`)
+      return
+    }
     const personObject = {
       name: newName
     }

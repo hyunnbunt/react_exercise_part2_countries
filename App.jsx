@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import phonebookService from './services/phonebook'
 import PersonForm from './components/Forms'
 import Filter from './components/Filter'
+import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [keyword, setKeyword] = useState('')
+  const [message, setMessage] = useState('')
   let updatingPersonId = -1
 
   useEffect(() => {
@@ -17,6 +19,17 @@ const App = () => {
       setPersons(initialPhonebook)
     })
   }, [])
+
+  const Notification = ({message}) => {
+    if (message === null) {
+      return null
+    }
+    return (
+      <div className='message'>
+        {message}
+      </div>
+    )
+  }
 
   const Persons = () => {
     return (
@@ -75,8 +88,13 @@ const App = () => {
         setPersons(persons.concat(createdPerson))
         setNewName('')
         setNewNumber('')
+        setMessage(
+          `${createdPerson.name} is added to phonebook.`
+        )
+        setTimeout(() => {
+          setMessage(null)
+        }, 5000)
       })
-
   }
 
   const updateNumber = () => {
@@ -93,6 +111,9 @@ const App = () => {
           }
           return person
         }))
+      })
+      .catch(error => {
+        setMessage(`Information of ${newName} is already removed from server.`)
       })
   }
   
@@ -128,6 +149,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={message}/>
       <Filter 
         keyword={keyword} 
         handleKeywordChange={handleKeywordChange} />

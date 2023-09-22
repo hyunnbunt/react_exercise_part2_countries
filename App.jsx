@@ -6,6 +6,7 @@ import axios from "axios"
 const App = () => {
   const [searchCountry, setSearchCountry] = useState('')
   const [allCountries, setAllCountries] = useState([])
+  const [selectedCountry, setSelectedCountry] = useState(null)
 
   useEffect(() => {
     axios
@@ -17,6 +18,7 @@ const App = () => {
 
   const handleSearchCountryChange = (event) => {
     setSearchCountry(event.target.value)
+    setSelectedCountry(null)
   }
 
   const showLanguages = (targetCountry) => {
@@ -66,52 +68,69 @@ const App = () => {
     }
   }
 
+  const showInfo = (targetCountry) => {
+    return (
+      <div>
+        <div>
+          {showName(targetCountry)}
+        </div>
+        <div>
+          {showCapital(targetCountry)}
+        </div>
+        <div>
+          {showArea(targetCountry)}
+        </div>
+        <div>
+          {showLanguages(targetCountry)}
+        </div>
+        <div>
+          {showFlag(targetCountry)}
+        </div>
+      </div>
+    )
+  }
+
+  const tooManyResults = () => {
+    return (
+      <div>
+        Too many matches, specify another filter
+      </div>
+    )
+  }
+
+  const showLists = (filtered) => {
+    return (
+      <div>
+        {filtered.map(country =>
+          <div key={country.name.common}>
+            <ul>
+              {country.name.common} <button onClick={() => setSelectedCountry(country)}>show</button>
+            </ul>
+          </div>
+
+        )}
+      </div>
+    )
+  }
+
   const Result = () => {
     const filtered = allCountries.filter(country => 
       country.name.common.toLowerCase()
       .includes(searchCountry.toLowerCase()))
 
     if (filtered.length > 10) {
-      return (
-        <div>
-          Too many matches, specify another filter
-        </div>
-      )
+      return tooManyResults()
     }
 
     if (filtered.length === 1) {
-      const targetCountry = filtered[0]
-      console.log(targetCountry)
-
-      return (
-        <div>
-          <div>
-            {showName(targetCountry)}
-          </div>
-          <div>
-            {showCapital(targetCountry)}
-          </div>
-          <div>
-            {showArea(targetCountry)}
-          </div>
-          <div>
-            {showLanguages(targetCountry)}
-          </div>
-          <div>
-            {showFlag(targetCountry)}
-          </div>
-        </div>
-        
-      )
+      return showInfo(filtered[0])
     }
 
-    return (
-      <div>
-        {filtered.map(country =>
-          <ul key={country.name.common}>{country.name.common}</ul>
-        )}
-      </div>
-    )
+    else if (selectedCountry === null) {
+      return showLists(filtered)
+    }
+
+    return showInfo(selectedCountry)
   }
 
   return (
